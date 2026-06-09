@@ -4,7 +4,7 @@ class Case:
     Création de la classe case
     """
 
-    def __init__(self, position_ligne: int, position_colonne:int, valeur:int):
+    def __init__(self, position_ligne: int, position_colonne:int, valeur:int) -> None:
         self.position_ligne = position_ligne
         self.position_colonne = position_colonne
         self.valeur = valeur
