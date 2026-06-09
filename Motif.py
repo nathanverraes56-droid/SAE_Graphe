@@ -1,5 +1,5 @@
 class Motif:
-    """ceci est la docstring de motif muhahaha
+    """Un motif est une liste de cases ayant une taille (un nombre de cases)
     """
     
     def __init__(self, liste_cases) -> None:
@@ -12,8 +12,3 @@ class Motif:
     def getListeCases(self):
         return(self.liste_cases)
             
-    
-    
-
-        
-        
