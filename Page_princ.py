@@ -12,26 +12,25 @@ class Page_princ(QWidget):
         self.setWindowIcon(QIcon(sys.path[0] + '/Images/Icone.png'))
         self.resize(500, 500)
         
-        # 1. Configuration de l'image de fond
+        #  Configuration de l'image de fond
         pixmap_fond = QPixmap("Images/Icone.png")
         palette = QPalette()
-        palette.setBrush(QPalette.ColorRole.Window, QBrush(pixmap_fond.scaled(self.size(), 
-                                                                               Qt.AspectRatioMode.IgnoreAspectRatio, 
-                                                                               Qt.TransformationMode.SmoothTransformation)))
+        palette.setBrush(QPalette.ColorRole.Window, 
+                         QBrush(pixmap_fond.scaled(self.size(), 
+                                Qt.AspectRatioMode.IgnoreAspectRatio, 
+                                Qt.TransformationMode.SmoothTransformation)))
         self.setPalette(palette)
 
-        # 2. Création du layout principal
+        #  Création du layout principal
         self.Principale = QVBoxLayout()
         self.Principale.setAlignment(Qt.AlignmentFlag.AlignCenter) 
 
-        # ---------------------------------------------------------
-        # NOUVEAUTÉ : Le Conteneur semi-transparent
-        # ---------------------------------------------------------
+        #Creation d'un cube avec une opacité plus faible pour meiux voir le titre
         self.conteneur = QFrame()
         self.conteneur.setStyleSheet("""
             QFrame {
-                background-color: rgba(255, 255, 255, 220); /* Blanc avec une opacité de 220 sur 255 */
-                border-radius: 15px; /* Bords arrondis pour l'esthétique */
+                background-color: rgba(255, 255, 255, 220); 
+                border-radius: 15px; 
             }
         """)
         
@@ -50,7 +49,7 @@ class Page_princ(QWidget):
             font-size: 32px; 
             font-weight: bold; 
             color: #2A3E90;
-            background-color: transparent; /* Très important : rend le fond du texte invisible pour voir le conteneur */
+            background-color: transparent; 
         """)
 
         # Création des boutons
@@ -77,7 +76,7 @@ class Page_princ(QWidget):
         # Rendre le bouton QUITTER fonctionnel
         self.b_quitter.clicked.connect(self.close)
 
-        # Ajout des widgets au layout du CONTENEUR (et non plus au layout principal)
+        # Ajout des widgets au layout
         self.layout_conteneur.addWidget(self.NomDuJeu)
         self.layout_conteneur.addWidget(self.b_jouer)
         self.layout_conteneur.addWidget(self.b_quitter)
