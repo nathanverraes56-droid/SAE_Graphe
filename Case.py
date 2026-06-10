@@ -24,15 +24,21 @@ class Case:
     def setPositionColonne(self, nouvelle_position_colonne:int) -> None: # modification de la position de la colonne de la case
         self.position_colonne = nouvelle_position_colonne
     
-    def est_voisin(self) -> list:
+    def estVoisin(self) -> list:
+        """
+        Met dans une liste les coordonées des voisins de la case :
+        (ligne-1, colonne-1), (ligne-1, colonne), (ligne-1, colonne+1)
+        (ligne, colonne-1), (ligne, colonne+1)
+        (ligne+1, colonne-1), (ligne+1, colonne), (ligne+1, colonne+1)
+        """
         liste_voisin: list[tuple] =[]
         liste_voisin = [(self.position[0]-1, self.position[1]-1), (self.position[0]-1, self.position[1]), (self.position[0]-1, self.position[1]+1),
          (self.position[0], self.position[1]-1), (self.position[0], self.position[1]+1), 
          (self.position[0]+1, self.position[1]-1), (self.position[0]+1, self.position[1]), (self.position[0]+1, self.position[1]+1)]
         for i in range(len(liste_voisin)):
             if liste_voisin[i][0] < 0:
-                liste_voisin[i][0].pop() #retire si la position est négative
+                liste_voisin[i][0].pop() # retire si la position de la ligne est négative
             elif liste_voisin[i][1] < 0:
-                liste_voisin[i][1].pop()
-        return liste_voisin
-    #savoir quelles sont les cases qui sont autour 
+                liste_voisin[i][1].pop() # retire si la position de la colonne est négative
+        return liste_voisin 
+     

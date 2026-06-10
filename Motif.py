@@ -13,4 +13,9 @@ class Motif:
     
     def getListeCases(self) -> list[Case]:
         return(self.liste_cases)
-            
+    
+    def valeurExiste(self, valeur: int) -> bool:
+        for i in range(self.taille):
+            if valeur in self.liste_cases[i][2]:
+                return True
+        return False    
