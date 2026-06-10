@@ -52,6 +52,7 @@ class Page_princ(QWidget):
 
         # Création des boutons
         self.b_jouer = QPushButton("JOUER")
+        self.b_para = QPushButton("PARAMETRES")
         self.b_quitter = QPushButton("QUITTER")
 
         # Application d'un style CSS aux boutons
@@ -69,6 +70,7 @@ class Page_princ(QWidget):
             }
         """
         self.b_jouer.setStyleSheet(style_bouton)
+        self.b_para.setStyleSheet(style_bouton)
         self.b_quitter.setStyleSheet(style_bouton)
 
         # Rendre le bouton QUITTER fonctionnel
@@ -77,6 +79,7 @@ class Page_princ(QWidget):
         # Ajout des widgets au layout
         self.layout_conteneur.addWidget(self.NomDuJeu)
         self.layout_conteneur.addWidget(self.b_jouer)
+        self.layout_conteneur.addWidget(self.b_para)
         self.layout_conteneur.addWidget(self.b_quitter)
         
         # Ajout du conteneur au layout principal

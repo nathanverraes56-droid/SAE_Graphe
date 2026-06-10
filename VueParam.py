@@ -4,7 +4,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QIcon, QPixmap, QPalette, QBrush
 
 
-class Page_princ(QWidget):
+class VueParam(QWidget):
     def __init__(self):
         super().__init__()
         
