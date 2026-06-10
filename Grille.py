@@ -18,9 +18,9 @@ class Grille:
 
     def liste_case_non_vide(self) -> list[Motif]:
         liste_composant_grille = []
-        for elt in self.liste:
-            if elt > 0:
-                liste_composant_grille.append(elt)
+        for i in range(self.taille):
+            if self.liste[i][2] > 0:
+                liste_composant_grille.append(self.liste[i][2])
         return liste_composant_grille
 
 
