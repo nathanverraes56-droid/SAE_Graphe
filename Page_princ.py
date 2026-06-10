@@ -40,8 +40,6 @@ class Page_princ(QWidget):
         self.layout_conteneur.setContentsMargins(40, 40, 40, 40) # Ajoute de l'espace à l'intérieur de la bulle
         self.layout_conteneur.setSpacing(20) # Ajoute de l'espace entre le titre et les boutons
 
-        # ---------------------------------------------------------
-
         # Création et stylisation du label (Titre)
         self.NomDuJeu = QLabel("Jeu du Néonaure")
         self.NomDuJeu.setAlignment(Qt.AlignmentFlag.AlignCenter)
