@@ -12,7 +12,7 @@ class Case:
     def getPositionCase(self) -> tuple:
         return (self.position_colonne, self.position_ligne)
     
-    def setValeur(self, nouvelle_valeur) -> int:
+    def setValeur(self, nouvelle_valeur : int) -> None:
         self.valeur = nouvelle_valeur
 
     def setPositionLigne(self, nouvelle_position_ligne) -> None:

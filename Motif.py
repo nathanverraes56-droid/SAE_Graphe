@@ -13,4 +13,6 @@ class Motif:
     
     def getListeCases(self) -> list[Case]:
         return(self.liste_cases)
+    
+    
             
