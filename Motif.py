@@ -9,13 +9,21 @@ class Motif:
         self.liste_cases : list[Case] = liste_cases
         
     def getTaille(self) -> int:
-        return(self.taille)
+        return self.taille
     
     def getListeCases(self) -> list[Case]:
-        return(self.liste_cases)
+        return self.liste_cases
     
     def valeurExiste(self, valeur: int) -> bool:
-        for i in range(self.taille):
+        for i in range(self.getTaille()):
             if valeur in self.liste_cases[i][2]:
                 return True
-        return False    
+        return False
+    
+    def estValide(self) -> bool:
+        for i in range(self.getTaille()):
+            if self.valeurExiste(self.liste_cases[i][2]):
+                return False
+        return True
+    
+        

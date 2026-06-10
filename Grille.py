@@ -12,11 +12,11 @@ class Grille:
         self.liste = []
     
 
-    def ajout_motif(self, motif: Motif) -> None: # implémentation des motifs à la grille
+    def ajoutMotif(self, motif: Motif) -> None: # implémentation des motifs à la grille
         self.liste.append(motif)
 
 
-    def liste_case_non_vide(self) -> list[Motif]:
+    def listeCaseNonVide(self) -> list[Motif]:
         liste_composant_grille = []
         for i in range(self.taille):
             if self.liste[i][2] > 0:
@@ -24,7 +24,7 @@ class Grille:
         return liste_composant_grille
 
 
-    def setValeur(self, nouv_valeur: int) -> None:
+    def setValeurCase(self, nouv_valeur: int) -> None:
         if self.valeur in self.liste_case_non_vide():
             print("vous ne pouvez pas modifier la valeur initiale") # vérification de l'existence d'une valeur sur une case
         else:
