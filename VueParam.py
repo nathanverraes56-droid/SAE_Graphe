@@ -46,9 +46,9 @@ class VueParam(QWidget):
                 background-color: #2980B9;
             }
         """
-        self.b_Theme1.setStyleSheet(style_bouton)
-        self.b_Theme2.setStyleSheet(style_bouton)
-        self.b_retour.setStyleSheet(style_bouton)
+        #self.b_Theme1.setStyleSheet(style_bouton)
+        #self.b_Theme2.setStyleSheet(style_bouton)
+        #self.b_retour.setStyleSheet(style_bouton)
        
 
         # Ajout des widgets au layout
@@ -61,8 +61,3 @@ class VueParam(QWidget):
         self.setLayout(self.Principale)
         self.show()
 
-if __name__ == "__main__":
-    print('Lancement du menu principal...')
-    app = QApplication(sys.argv)
-    f = Page_princ()
-    sys.exit(app.exec())

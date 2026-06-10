@@ -69,9 +69,9 @@ class Page_princ(QWidget):
                 background-color: #2980B9;
             }
         """
-        self.b_jouer.setStyleSheet(style_bouton)
-        self.b_para.setStyleSheet(style_bouton)
-        self.b_quitter.setStyleSheet(style_bouton)
+        #self.b_jouer.setStyleSheet(style_bouton)
+        #self.b_para.setStyleSheet(style_bouton)
+        #self.b_quitter.setStyleSheet(style_bouton)
 
         # Rendre le bouton QUITTER fonctionnel
         self.b_quitter.clicked.connect(self.close)
