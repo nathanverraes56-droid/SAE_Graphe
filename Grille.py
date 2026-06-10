@@ -7,10 +7,25 @@ class Grille:
     est de la classe motif
     """
 
-    def __init__(self, taille, dico: dict):
+    def __init__(self, taille: int, liste:list):
         self.taille = taille
-        self.dico = {}
+        self.liste = []
     
 
-    def ajout_motif(self, motif: Motif, nom_motif: str) -> None: # implémentation des motifs à la grille
-        self.dictionnaire[nom_motif] = motif
+    def ajout_motif(self, motif: Motif) -> None: # implémentation des motifs à la grille
+        self.liste.append(motif)
+
+
+    def liste_case_non_vide(self) -> list[Motif]:
+        liste_composant_grille = []
+        for elt in self.liste:
+            if elt > 0:
+                liste_composant_grille.append(elt)
+        return liste_composant_grille
+
+
+    def setValeur(self, nouv_valeur: int) -> None:
+        if self.valeur in self.liste_case_non_vide():
+            print("vous ne pouvez pas modifier la valeur initiale") # vérification de l'existence d'une valeur sur une case
+        else:
+            self.valeur = nouv_valeur 

@@ -24,3 +24,4 @@ class Case:
     def setPositionColonne(self, nouvelle_position_colonne:int) -> None: # modification de la position de la colonne de la case
         self.position_colonne = nouvelle_position_colonne
     
+    #savoir quelles sont les cases qui sont autour 
