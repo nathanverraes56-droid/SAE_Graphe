@@ -21,6 +21,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 */
 
 /*-----QWidget-----*/
+
+
+
 QWidget
 {
 	background-color: #242424;
@@ -28,6 +31,18 @@ QWidget
 	selection-background-color: #fff;
 	selection-color: #000;
 
+}
+/* 2. On configure la fenêtre principale avec l'image de fond */
+QMainWindow {
+    background-image: url("Images/Icone.png");
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* 3. IMPORTANT : On force la pile de vues et les pages internes à être 
+   transparentes pour laisser apparaître l'image de fond derrière elles */
+QStackedWidget, QStackedWidget > QWidget {
+    background-color: transparent;
 }
 
 
