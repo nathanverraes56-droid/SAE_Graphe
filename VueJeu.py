@@ -17,6 +17,7 @@ class VueJeu(QWidget):
 
         self.layout_grille = QGridLayout()
         self.layout_grille.setSpacing(0)
+        self.layout_grille.setColumnMinimumWidth(0)
         self.cases = {} 
 
         for ligne in range(8):
