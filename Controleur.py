@@ -13,20 +13,6 @@ class Controleur(QMainWindow):
         self.setWindowTitle("Projet SAE Néonaure")
         self.setWindowIcon(QIcon(os.path.join(sys.path[0], 'Images', 'Icone.png')))
         self.resize(550, 550)
-        
-        # ✨ STYLE PAR DÉFAUT AU DÉMARRAGE ✨
-        # On applique directement les règles QSS pour afficher l'image de fond
-        # et rendre les conteneurs transparents dès l'ouverture.
-        QApplication.instance().setStyleSheet("""
-            QMainWindow {
-                background-image: url("Images/Icone.png");
-                background-position: center;
-                background-repeat: no-repeat;
-            }
-            QStackedWidget, QStackedWidget > QWidget {
-                background-color: transparent;
-            }
-        """)
 
         # Configuration du QStackedWidget
         self.pile_vues = QStackedWidget()
@@ -47,6 +33,9 @@ class Controleur(QMainWindow):
         self.vue_param.b_Theme1.clicked.connect(self.Theme1)
         self.vue_param.b_Theme2.clicked.connect(self.Theme2)
         
+        # On appelle directement la méthode du thème choisi par défaut (ici le Thème 1).
+        self.Theme1()
+        
     def appliquer_qss(self, nom_fichier: str) -> None:
         """Loads and applies a QSS stylesheet, with console feedback if it fails."""
         chemin_complet = os.path.join(sys.path[0], "fichier_qss", nom_fichier)
@@ -57,11 +46,11 @@ class Controleur(QMainWindow):
                 with open(chemin_complet, 'r', encoding='utf-8') as fichier_style:
                     qss = fichier_style.read()
                     QApplication.instance().setStyleSheet(qss)
-                    print(f"🎨 Style '{nom_fichier}' appliqué avec succès !")
+                    print(f" Style '{nom_fichier}' appliqué avec succès !")
             except Exception as e:
-                print(f"❌ Erreur lors de la lecture du fichier QSS : {e}")
+                print(f" Erreur lors de la lecture du fichier QSS : {e}")
         else:
-            print(f"❌ ERREUR : Le fichier '{nom_fichier}' est introuvable à l'adresse indiquée.")
+            print(f" ERREUR : Le fichier '{nom_fichier}' est introuvable.")
 
     def afficher_para(self):
         self.pile_vues.setCurrentIndex(1)
@@ -70,10 +59,16 @@ class Controleur(QMainWindow):
         self.pile_vues.setCurrentIndex(0)
     
     def Theme1(self) -> None:
+        """Applique le Thème 1, grise son bouton et active celui du Thème 2."""
         self.appliquer_qss("Diffnes.qss")
+        self.vue_param.b_Theme1.setEnabled(False)  # Bouton grisé
+        self.vue_param.b_Theme2.setEnabled(True)   # Bouton cliquable
     
     def Theme2(self) -> None:
+        """Applique le Thème 2, grise son bouton et active celui du Thème 1."""
         self.appliquer_qss("Adaptic.qss")
+        self.vue_param.b_Theme1.setEnabled(True)   # Bouton cliquable
+        self.vue_param.b_Theme2.setEnabled(False)  # Bouton grisé
 
 
 if __name__ == "__main__":
