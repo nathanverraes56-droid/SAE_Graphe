@@ -33,13 +33,13 @@ class Controleur(QMainWindow):
         self.vue_param.b_Theme1.clicked.connect(self.Theme1)
         self.vue_param.b_Theme2.clicked.connect(self.Theme2)
         
-        # On appelle directement la méthode du thème choisi par défaut (ici le Thème 1).
+        # On appelle directement la méthode du thème choisi par défaut.
         self.Theme1()
         
     def appliquer_qss(self, nom_fichier: str) -> None:
         """Loads and applies a QSS stylesheet, with console feedback if it fails."""
         chemin_complet = os.path.join(sys.path[0], "fichier_qss", nom_fichier)
-        print(f"🔍 Tentative de chargement du QSS : {chemin_complet}")
+        print(f"Tentative de chargement du QSS : {chemin_complet}")
         
         if os.path.exists(chemin_complet):
             try:
