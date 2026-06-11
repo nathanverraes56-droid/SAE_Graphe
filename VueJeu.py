@@ -39,6 +39,7 @@ class VueJeu(QWidget):
         layoutPrincipal.addLayout(layoutBoutons)
         
         self.show()
+        #commentaire
         
 # --- main -----------------------------------------------------------------
 if __name__ == "__main__":
