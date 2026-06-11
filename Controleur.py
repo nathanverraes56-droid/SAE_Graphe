@@ -36,7 +36,7 @@ class Controleur(QMainWindow):
         self.vue_menu.b_jouer.clicked.connect(self.afficher_jeu)
         self.vue_param.b_Theme1.clicked.connect(self.Theme1)
         self.vue_param.b_Theme2.clicked.connect(self.Theme2)
-        #self.vue_jeu.Quitter.clicked.connect(self.afficher_menu)
+        self.vue_jeu.quitter.clicked.connect(self.afficher_menu)
         
         # On appelle directement la méthode du thème choisi par défaut.
         self.Theme1()

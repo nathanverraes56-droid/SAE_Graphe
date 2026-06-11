@@ -62,16 +62,3 @@ class VueJeu(QWidget):
         self.show()
         #commentaire
         
-# --- main -----------------------------------------------------------------
-if __name__ == "__main__":
-
-    print(' --- main --- ')
-    
-    # création d'une QApplication
-    app = QApplication(sys.argv)
-
-    # creation d'un widget
-    f = VueJeu()
-
-    # lancement de l'application
-    sys.exit(app.exec())
