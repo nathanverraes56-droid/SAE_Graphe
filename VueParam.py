@@ -17,6 +17,21 @@ class VueParam(QWidget):
         self.Principale = QVBoxLayout()
         self.Principale.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
+        #Creation d'un cube avec une opacité plus faible pour meiux voir le titre
+        self.conteneur = QFrame()
+        self.conteneur.setStyleSheet("""
+            QFrame {
+                background-color: rgba(255, 255, 255, 220); 
+                border-radius: 15px; 
+            }
+        """)
+        
+        # Création d'un sous-layout pour organiser les éléments DANS le conteneur
+        self.layout_conteneur = QVBoxLayout(self.conteneur)
+        self.layout_conteneur.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.layout_conteneur.setContentsMargins(40, 40, 40, 40) # Ajoute de l'espace à l'intérieur de la bulle
+        self.layout_conteneur.setSpacing(20) # Ajoute de l'espace entre le titre et les boutons
+        
         # Création et stylisation du label (Titre)
         self.NomParam = QLabel("Paramètres")
         self.NomParam.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -52,10 +67,13 @@ class VueParam(QWidget):
        
 
         # Ajout des widgets au layout
-        self.Principale.addWidget(self.NomParam)
-        self.Principale.addWidget(self.b_Theme1)
-        self.Principale.addWidget(self.b_Theme2)
-        self.Principale.addWidget(self.b_retour)
+        self.layout_conteneur.addWidget(self.NomParam)
+        self.layout_conteneur.addWidget(self.b_Theme1)
+        self.layout_conteneur.addWidget(self.b_Theme2)
+        self.layout_conteneur.addWidget(self.b_retour)
+        
+         # Ajout du conteneur au layout principal
+        self.Principale.addWidget(self.conteneur)
         
         # Affichage
         self.setLayout(self.Principale)

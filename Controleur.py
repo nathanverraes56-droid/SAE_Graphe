@@ -34,12 +34,12 @@ class Controleur(QMainWindow):
         self.pile_vues.addWidget(self.vue_menu)
         self.pile_vues.addWidget(self.vue_param)
 
-        #Connexion des signaux (boutons) aux méthodes du contrôleur
+        #Connexion des signaux aux méthodes du contrôleur
         self.vue_menu.b_para.clicked.connect(self.afficher_para)
         self.vue_menu.b_quitter.clicked.connect(self.close)
         self.vue_param.b_retour.clicked.connect(self.afficher_menu)
-        self.vue_param.b_Theme1.clicked.connect(self.Them1)
-        self.vue_param.b_Theme2.clicked.connect(self.Them2)
+        self.vue_param.b_Theme1.clicked.connect(self.Theme1)
+        self.vue_param.b_Theme2.clicked.connect(self.Theme2)
         
         
     def appliquer_qss(self, nom_fichier: str) -> None:
@@ -62,11 +62,15 @@ class Controleur(QMainWindow):
     def afficher_menu(self):
         # Bascule sur le menu principal
         self.pile_vues.setCurrentIndex(0)
+    
+    # def afficher_jeu(self):
+        #bascule sur le menu de jeu
+        #self.pile_vues.setCurrentIndex(2)
         
-    def Them1(self) -> None:
+    def Theme1(self) -> None:
         self.appliquer_qss("Diffnes.qss")
     
-    def Them2(self) -> None:
+    def Theme2(self) -> None:
         self.appliquer_qss("Adaptic.qss")
 
 
