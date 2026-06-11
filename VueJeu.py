@@ -35,29 +35,29 @@ class VueJeu(QWidget):
                 self.layout_grille.addWidget(case, ligne, colonne)
                 self.cases[(ligne, colonne)] = case
 
-        EtatResolution = QLabel("Etat de Résolution : En cours")
-        EtatResolution.resize(50,50)
-        EtatResolution.setFont(QFont("Arial", pointSize=20))
-        EtatResolution.setAlignment(Qt.AlignmentFlag.AlignBottom)
+        self.etatresolution = QLabel("Etat de Résolution : En cours")
+        self.etatresolution.resize(50,50)
+        self.etatresolution.setFont(QFont("Arial", pointSize=20))
+        self.etatresolution.setAlignment(Qt.AlignmentFlag.AlignBottom)
         #EtatResolution.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
-        layoutBoutons = QHBoxLayout()
+        self.layoutBoutons = QHBoxLayout()
         
-        Quitter = QPushButton("Quitter")
-        Ouvrir = QPushButton("Ouvrir")
-        Enregistrer = QPushButton("Enregistrer")
-        Verification = QPushButton("Verification")
-        Solveur = QPushButton("Solveur")
+        self.quitter = QPushButton("Quitter")
+        self.ouvrir = QPushButton("Ouvrir")
+        self.enregistrer = QPushButton("Enregistrer")
+        self.verification = QPushButton("Verification")
+        self.solveur = QPushButton("Solveur")
         
-        layoutBoutons.addWidget(Quitter)
-        layoutBoutons.addWidget(Ouvrir)
-        layoutBoutons.addWidget(Enregistrer)
-        layoutBoutons.addWidget(Verification)
-        layoutBoutons.addWidget(Solveur)
+        self.layoutBoutons.addWidget(self.quitter)
+        self.layoutBoutons.addWidget(self.ouvrir)
+        self.layoutBoutons.addWidget(self.enregistrer)
+        self.layoutBoutons.addWidget(self.verification)
+        self.layoutBoutons.addWidget(self.solveur)
         
         layoutPrincipal.addLayout(self.layout_grille)
-        layoutPrincipal.addWidget(EtatResolution)
-        layoutPrincipal.addLayout(layoutBoutons)
+        layoutPrincipal.addWidget(self.etatresolution)
+        layoutPrincipal.addLayout(self.layoutBoutons)
         
         self.show()
         #commentaire
