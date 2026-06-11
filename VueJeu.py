@@ -1,5 +1,5 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLabel
+from PyQt6.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLabel, QGridLayout, QLineEdit
 from PyQt6.QtCore import Qt 
 from PyQt6.QtGui import QFont
 
@@ -14,7 +14,28 @@ class VueJeu(QWidget):
         #layout vertical principal 
         
         layoutPrincipal = QVBoxLayout() ; self.setLayout(layoutPrincipal)
-        
+
+        self.layout_grille = QGridLayout()
+        self.layout_grille.setSpacing(0)
+        self.layout_grille.setColumnMinimumWidth(0)
+        self.cases = {} 
+
+        for ligne in range(8):
+            for colonne in range(8):
+                case = QLineEdit()
+                case.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                case.setMaxLength(1) 
+                case.setFixedSize(50, 50)
+                case.setStyleSheet("""
+                    QLineEdit {
+                        border: 1px solid black;
+                        font-size: 20px;
+                        background-color: white;
+                    }
+                """)
+                self.layout_grille.addWidget(case, ligne, colonne)
+                self.cases[(ligne, colonne)] = case
+
         EtatResolution = QLabel("Etat de Résolution : En cours")
         EtatResolution.resize(50,50)
         EtatResolution.setFont(QFont("Arial", pointSize=20))
@@ -35,6 +56,7 @@ class VueJeu(QWidget):
         layoutBoutons.addWidget(Verification)
         layoutBoutons.addWidget(Solveur)
         
+        layoutPrincipal.addLayout(self.layout_grille)
         layoutPrincipal.addWidget(EtatResolution)
         layoutPrincipal.addLayout(layoutBoutons)
         
