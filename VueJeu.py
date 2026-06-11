@@ -9,7 +9,7 @@ class VueJeu(QWidget):
         super().__init__()
         
         self.setWindowTitle('Jeu du Néonaure')
-        self.resize(600, 600)
+        self.resize(700, 700)
         
         #layout vertical principal 
         
@@ -17,7 +17,6 @@ class VueJeu(QWidget):
 
         self.layout_grille = QGridLayout()
         self.layout_grille.setSpacing(0)
-        self.layout_grille.setColumnMinimumWidth(0)
         self.cases = {} 
 
         for ligne in range(8):
