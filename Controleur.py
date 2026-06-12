@@ -258,7 +258,7 @@ class Controleur(QMainWindow):
                 valeur = case.valeur if case.valeur is not None else 0
                 
                 # Format étendu : on ajoute case.est_fixe à la fin
-                cases_motif.append([case.position_ligne, case.position_colonne, valeur, case.est_fixe])
+                cases_motif.append([case.position_colonne, case.position_ligne, valeur, case.est_fixe])
             
             donnees_a_sauvegarder[nom_motif] = cases_motif
             

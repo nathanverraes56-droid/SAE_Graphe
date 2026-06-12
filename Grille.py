@@ -59,8 +59,8 @@ class Grille:
             cases_du_motif = []
 
             for donnee_case in liste_cases_json:
-                ligne = donnee_case[0]
-                colonne = donnee_case[1]
+                colonne = donnee_case[0]
+                ligne = donnee_case[1]
                 valeur_brute = donnee_case[2]
 
                 # Si la valeur est 0, c'est une case vide (None dans notre modèle)
