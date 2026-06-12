@@ -66,7 +66,7 @@ class Grille:
                 if valeur_brute == 0:
                     valeur = None
                 else:
-                    valeur_brute
+                    valeur = valeur_brute
                 
                 # si la liste contient 4 éléments c'est une sauvegarde on lit l'état est_fixe sinon c'est un fichier d'origine on déduit que c'est fixe si la valeur > 0
                 if len(donnee_case) >= 4:
