@@ -50,12 +50,14 @@ class VueJeu(QWidget):
         # Barre d'outils / Boutons d'actions
         self.layoutBoutons = QHBoxLayout()
         
-        self.quitter = QPushButton("Menu")
+        self.menu = QPushButton("Menu")
         self.ouvrir = QPushButton("Ouvrir")
         self.enregistrer = QPushButton("Enregistrer")
         self.solveur = QPushButton("Résoudre")
+        self.theme = QPushButton("Thème")
         
-        self.layoutBoutons.addWidget(self.quitter)
+        self.layoutBoutons.addWidget(self.menu)
+        self.layoutBoutons.addWidget(self.theme)
         self.layoutBoutons.addWidget(self.ouvrir)
         self.layoutBoutons.addWidget(self.enregistrer)
         self.layoutBoutons.addWidget(self.solveur)

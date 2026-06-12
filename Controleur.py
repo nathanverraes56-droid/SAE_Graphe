@@ -47,7 +47,8 @@ class Controleur(QMainWindow):
 
         # Connexions des boutons de la page de Jeu
         self.vue_jeu.ouvrir.clicked.connect(self.action_ouvrir_grille)
-        self.vue_jeu.quitter.clicked.connect(self.afficher_menu)
+        self.vue_jeu.menu.clicked.connect(self.afficher_menu)
+        self.vue_jeu.theme.clicked.connect(self.basculer_theme)
         self.vue_jeu.enregistrer.clicked.connect(self.action_enregistrer_grille)
         self.vue_jeu.solveur.clicked.connect(self.action_solveur)
         
@@ -78,10 +79,12 @@ class Controleur(QMainWindow):
         self.style().polish(self)
 
     def afficher_menu(self):
+        """
+        Appelée lors du clic sur 'Menu' dans le jeu ou 'Retour' dans les paramètres.
+        """
         self.resize(550, 550) 
         self.pile_vues.setCurrentIndex(0)
         
-        # On passe en mode "menu" et on met à jour le visuel
         self.setProperty("etat_fenetre", "menu")
         self.style().unpolish(self)
         self.style().polish(self)
@@ -98,11 +101,13 @@ class Controleur(QMainWindow):
         self.appliquer_qss("Diffnes.qss")
         self.vue_param.b_Theme1.setEnabled(False)
         self.vue_param.b_Theme2.setEnabled(True)
-    
+        self.theme_actuel = 1 
+
     def Theme2(self) -> None:
         self.appliquer_qss("Adaptic.qss")
         self.vue_param.b_Theme1.setEnabled(True)
         self.vue_param.b_Theme2.setEnabled(False)
+        self.theme_actuel = 2 
 
 
 
@@ -357,29 +362,16 @@ class Controleur(QMainWindow):
             
         return True # Si pas de modification, on peut quitter directement
 
-    def afficher_menu(self):
-        """Appelée lors du clic sur 'Quitter' dans le jeu"""
-        # on bascule sur le menu que si le joueur a confirmé ou n'a rien modifié
-        if self.peut_quitter_grille():
-            self.resize(550, 550) 
-            self.pile_vues.setCurrentIndex(0)
-            
-            self.setProperty("etat_fenetre", "menu")
-            self.style().unpolish(self)
-            self.style().polish(self)
 
     def closeEvent(self, event) -> None:
         """
-        Méthode de PyQt quand on clique sur la croix.
+        Méthode appliquer quand veut quitter.
         """
-        # Si on est actuellement sur la page de jeu
-        if self.pile_vues.currentIndex() == 2:
-            if self.peut_quitter_grille():
-                event.accept() # on accepte la fermeture de l'application
-            else:
-                event.ignore() # on annule la fermeture, l'application reste ouverte
+        # On vérifie TOUJOURS s'il y a une partie en cours non sauvegardée avant de fermer
+        if self.peut_quitter_grille():
+            event.accept() # On accepte la fermeture de l'application
         else:
-            event.accept() # si on est dans les menus, on ferme directement
+            event.ignore() # On annule la fermeture, l'application reste ouverte
             
     def charger_grille_defaut(self) -> None:
         """Charge une grille de base automatiquement au démarrage de l'application."""
@@ -422,6 +414,13 @@ class Controleur(QMainWindow):
         else:
             self.remplir_grille_graphique()
             self.vue_jeu.etatresolution.setText("Erreur : Cette grille n'a pas de solution !")
+            
+    def basculer_theme(self) -> None:
+        """Bouton Thème : Alterne entre le thème clair et le thème sombre."""
+        if getattr(self, 'theme_actuel', 1) == 1:
+            self.Theme2() 
+        else:
+            self.Theme1() 
 
 
 if __name__ == "__main__":
