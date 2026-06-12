@@ -1,14 +1,14 @@
 class Case:
     """
-    Création de la classe case composée de ses coordonnées (ligne, colonne), 
-    de sa valeur et de son statut (fixe ou jouable).
+    Création de la classe case composée de ses coordonnées
+    de sa valeur et de son statut (fixe ou jouable)
     """
 
     def __init__(self, position_ligne: int, position_colonne: int, valeur: int | None = None, est_fixe: bool = False) -> None: 
         self.position_ligne = position_ligne
         self.position_colonne = position_colonne
         self.valeur = valeur
-        #Permet de Savoir si un nombre etait deja la a la base
+        # permet de Savoir si un nombre etait deja la a la base
         self.est_fixe = est_fixe 
 
     def getPositionCase(self) -> tuple[int, int]: 
