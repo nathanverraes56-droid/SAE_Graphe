@@ -1,6 +1,6 @@
 import sys
 import os
-from PyQt6.QtWidgets import (QApplication, QMainWindow, QStackedWidget, QFileDialog)
+from PyQt6.QtWidgets import (QApplication, QMainWindow, QStackedWidget, QFileDialog, QMessageBox)
 from PyQt6.QtGui import QIcon
 from Page_princ import Page_princ
 from VueParam import VueParam
@@ -19,6 +19,7 @@ class Controleur(QMainWindow):
 
         # Initialisation du modèle de jeu
         self.modele_jeu = Grille(8)
+        self.partie_modifiee = False
 
         # Configuration du QStackedWidget
         self.pile_vues = QStackedWidget()
@@ -194,6 +195,7 @@ class Controleur(QMainWindow):
             qline_edit.setText("")
 
         case_modele.set_valeur(valeur)
+        self.partie_modifiee = True
 
         # On lance l'analyse pour mettre à jour les couleurs
         self.mettre_a_jour_erreurs_visuelles()
@@ -276,6 +278,7 @@ class Controleur(QMainWindow):
                 json.dump(donnees_a_sauvegarder, fichier, indent=4)
                 
             self.vue_jeu.etatresolution.setText("Sauvegarde réussie !")
+            self.partie_modifiee = False
         except Exception as e:
             self.vue_jeu.etatresolution.setText(f"Erreur de sauvegarde : {e}")
 
@@ -287,11 +290,12 @@ class Controleur(QMainWindow):
         if chemin_fichier:
             self.modele_jeu.charger_grille_json(chemin_fichier)
             self.remplir_grille_graphique()
+            self.partie_modifiee = False
             
 
     def action_verifier_grille(self) -> None:
         """
-        C'est le bouton "vérification : il valide la grille entière si toutes le conditions de jeux sont bien respectés.
+        C'est le bouton "vérification" : il valide la grille entière si toutes le conditions de jeux sont bien respectés.
         """
         # Test des voisinages
         for coords in self.modele_jeu.dictionnaire_cases.keys():
@@ -310,6 +314,49 @@ class Controleur(QMainWindow):
             self.vue_jeu.etatresolution.setText("Félicitations! Grille résolue! 🎈🎉🎈🎉🎈🎉🎈🎉🎈🎉🎉🎉🎈🎈")
         else:
             self.vue_jeu.etatresolution.setText("Vérification: Aucune erreur, continuez !")
+            
+    def peut_quitter_grille(self) -> bool:
+        """
+        Vérifie si la grille a été modifiée si oui affiche une boîte de dialogue de confirmation.
+        """
+        if self.partie_modifiee:
+            # Création de la boîte de message de type Question
+            reponse = QMessageBox.question(
+                self,
+                "Changements non sauvegardés",
+                "Vous avez des modifications en cours. Voulez-vous vraiment quitter sans sauvegarder ?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No # Bouton sélectionné par défaut par sécurité
+            )
+            
+            # Si le joueur répond "Oui", on l'autorise à quitter
+            return reponse == QMessageBox.StandardButton.Yes
+            
+        return True # Si pas de modification, on peut quitter directement
+
+    def afficher_menu(self):
+        """Appelée lors du clic sur 'Quitter' dans le jeu"""
+        # on bascule sur le menu que si le joueur a confirmé ou n'a rien modifié
+        if self.peut_quitter_grille():
+            self.resize(550, 550) 
+            self.pile_vues.setCurrentIndex(0)
+            
+            self.setProperty("etat_fenetre", "menu")
+            self.style().unpolish(self)
+            self.style().polish(self)
+
+    def closeEvent(self, event) -> None:
+        """
+        Méthode de PyQt quand on clique sur la croix.
+        """
+        # Si on est actuellement sur la page de jeu
+        if self.pile_vues.currentIndex() == 2:
+            if self.peut_quitter_grille():
+                event.accept() # on accepte la fermeture de l'application
+            else:
+                event.ignore() # on annule la fermeture, l'application reste ouverte
+        else:
+            event.accept() # si on est dans les menus, on ferme directement
 
 
 if __name__ == "__main__":
