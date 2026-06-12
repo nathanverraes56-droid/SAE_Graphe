@@ -319,8 +319,7 @@ class Controleur(QMainWindow):
                 QMessageBox.warning(
                     self,
                     "Format de grille non supporté",
-                    f"Impossible d'importer cette grille.\n 
-                    Grille 8x8 requise",
+                    f"Impossible d'importer cette grille.\n Grille 8x8 requise",
                     QMessageBox.StandardButton.Ok
                 )
                 return # on annule
