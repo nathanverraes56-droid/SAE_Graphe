@@ -4,8 +4,8 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QStackedWidget, QFileDia
 from PyQt6.QtGui import QIcon
 from Page_princ import Page_princ
 from VueParam import VueParam
-from VueJeu import VueJeu   # Import de ta vue de jeu
-from Grille import Grille   # Import de ton modèle de données
+from VueJeu import VueJeu
+from Grille import Grille
 import json
 
 class Controleur(QMainWindow):
