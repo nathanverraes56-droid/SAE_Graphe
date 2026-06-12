@@ -53,13 +53,11 @@ class VueJeu(QWidget):
         self.quitter = QPushButton("Quitter")
         self.ouvrir = QPushButton("Ouvrir")
         self.enregistrer = QPushButton("Enregistrer")
-        self.verification = QPushButton("Vérification")
         self.solveur = QPushButton("Solveur")
         
         self.layoutBoutons.addWidget(self.quitter)
         self.layoutBoutons.addWidget(self.ouvrir)
         self.layoutBoutons.addWidget(self.enregistrer)
-        self.layoutBoutons.addWidget(self.verification)
         self.layoutBoutons.addWidget(self.solveur)
         
         # Assemblage dans le layout principal avec gestion des espaces

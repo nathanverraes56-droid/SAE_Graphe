@@ -47,7 +47,6 @@ class Controleur(QMainWindow):
 
         # Connexions des boutons de la page de Jeu
         self.vue_jeu.ouvrir.clicked.connect(self.action_ouvrir_grille)
-        self.vue_jeu.verification.clicked.connect(self.action_verifier_grille)
         self.vue_jeu.quitter.clicked.connect(self.afficher_menu)
         self.vue_jeu.enregistrer.clicked.connect(self.action_enregistrer_grille)
         
@@ -201,33 +200,30 @@ class Controleur(QMainWindow):
         self.mettre_a_jour_erreurs_visuelles()
 
     def mettre_a_jour_erreurs_visuelles(self) -> None:
-        """
-        Parcourt toute la grille et affiche en rouge les cases qui ne respectent pas une règle.
-        """
+        """Parcourt toute la grille et affiche en rouge les cases qui enfreignent une règle."""
         erreur_trouvee = False
-        message = "État de Résolution: En cours"
+        message = "État de Résolution : En cours"
 
         for coords, case_modele in self.modele_jeu.dictionnaire_cases.items():
             if case_modele.est_fixe:
-                continue # On ne change jamais la couleur des indices fixes
+                continue # On ne change jamais la couleur des indices fixes (ils restent gris)
             
             qline_edit = self.vue_jeu.cases.get(coords)
             bordures_css = self.styles_bordures.get(coords, "border: 1px solid black;")
 
             if case_modele.valeur is not None:
-                # Attribut de la règle des voisins
+                #vérification des voisins
                 voisins_ok = self.modele_jeu.verifier_voisins(coords[0], coords[1])
                 
-                # Attributs de la règle du motif
+                #vérification du motif (Doublons ou chiffre > N)
                 motif_actuel = self.carte_motifs.get(coords)
                 motif_ok = motif_actuel.estValide() if motif_actuel else True
 
-                # S'il y a la moindre erreur, la case passe en rouge
+                # en cas d'erreur la case passe en rouge
                 if not voisins_ok or not motif_ok:
                     qline_edit.setStyleSheet(f"{bordures_css} font-size: 20px; background-color: #ffcccc; color: red;")
                     erreur_trouvee = True
                     
-                    # Vérification du respect des règles
                     if not voisins_ok:
                         message = "Erreur : Doublon avec un voisin adjacent !"
                     elif case_modele.valeur > motif_actuel.getTaille():
@@ -235,14 +231,22 @@ class Controleur(QMainWindow):
                     else:
                         message = "Erreur : Doublon détecté dans le motif !"
                 else:
+                    # case redevient blanche avec texte bleu
                     qline_edit.setStyleSheet(f"{bordures_css} font-size: 20px; background-color: white; color: blue;")
             else:
-                # Si la case est vide garder la couleur blanche
+                # si la case est vide on s'assure qu'elle soit blanche
                 qline_edit.setStyleSheet(f"{bordures_css} font-size: 20px; background-color: white; color: blue;")
                 
-        # Changement du texte en bas de la grille
+        # all(...) renvoie True uniquement si toutes les cases ont une valeur
+        grille_complete = all(case.valeur is not None for case in self.modele_jeu.dictionnaire_cases.values())
+
+        #affichage du message final
         if erreur_trouvee:
             self.vue_jeu.etatresolution.setText(message)
+        elif grille_complete:
+            # s'il n'y a pas d'erreur (erreur_trouvee est False) ET que la grille est pleine
+            self.vue_jeu.etatresolution.setText("Félicitations ! Grille résolue ! 🎉🎈🎉🎈🎉🎈🎉🎈🎈🎉🎉🎉🎉🎉🎈🎈🎈🎈🎉🎈🎉🎈🐅🐅")
+            self.partie_modifiee = False # on considère la partie terminée, on peut quitter sans pop-up
         else:
             self.vue_jeu.etatresolution.setText("État de Résolution : En cours")
             
@@ -283,37 +287,52 @@ class Controleur(QMainWindow):
             self.vue_jeu.etatresolution.setText(f"Erreur de sauvegarde : {e}")
 
     def action_ouvrir_grille(self) -> None:
-        """
-        C'est le bouton "Ouvrir": il charge un fichier JSON.
-        """
+        """Bouton Ouvrir : Charge un fichier JSON uniquement en format 8x8."""
         chemin_fichier, _ = QFileDialog.getOpenFileName(self, "Ouvrir une grille Néonaure", "", "Fichiers JSON (*.json)")
-        if chemin_fichier:
+        if not chemin_fichier:
+            return # L'utilisateur a annulé la sélection
+
+        try:
+            # prelecture du fichier pour validation stricte du format 8x8
+            with open(chemin_fichier, 'r', encoding='utf-8') as fichier:
+                donnees = json.load(fichier)
+
+            compteur_cases = 0
+            format_incorrect = False
+
+            for nom_motif, liste_cases_json in donnees.items():
+                for donnee_case in liste_cases_json:
+                    colonne = donnee_case[0]
+                    ligne = donnee_case[1]
+                    compteur_cases += 1
+                    
+                    # si une coordonnée sort des index d'une grille 8x8 (0 à 7)
+                    if ligne < 0 or ligne >= 8 or colonne < 0 or colonne >= 8:
+                        format_incorrect = True
+
+            # si le compte n'y est pas ou si ça déborde
+            if compteur_cases != 64 or format_incorrect:
+                QMessageBox.warning(
+                    self,
+                    "Format de grille non supporté",
+                    f"Impossible d'importer cette grille.\n",
+                    QMessageBox.StandardButton.Ok
+                )
+                return # on annule
+
+            #si la validation est réussie, on procède au chargement normal
             self.modele_jeu.charger_grille_json(chemin_fichier)
             self.remplir_grille_graphique()
             self.partie_modifiee = False
             
-
-    def action_verifier_grille(self) -> None:
-        """
-        C'est le bouton "vérification" : il valide la grille entière si toutes le conditions de jeux sont bien respectés.
-        """
-        # Test des voisinages
-        for coords in self.modele_jeu.dictionnaire_cases.keys():
-            if not self.modele_jeu.verifier_voisins(coords[0], coords[1]):
-                self.vue_jeu.etatresolution.setText("Vérification: Doublon détecté côte à côte !")
-                return
-
-        # Test des motifs
-        for motif in self.modele_jeu.motifs:
-            if not motif.estValide():
-                self.vue_jeu.etatresolution.setText("Vérification: Erreur dans la répartition d'un motif !")
-                return
-
-        # Validation de fin de partie
-        if all(c.valeur is not None for c in self.modele_jeu.dictionnaire_cases.values()):
-            self.vue_jeu.etatresolution.setText("Félicitations! Grille résolue! 🎈🎉🎈🎉🎈🎉🎈🎉🎈🎉🎉🎉🎈🎈")
-        else:
-            self.vue_jeu.etatresolution.setText("Vérification: Aucune erreur, continuez !")
+        except Exception as e:
+            # si le fichier JSON a un problème
+            QMessageBox.critical(
+                self,
+                "Erreur de lecture",
+                f"Le fichier JSON est corrompu ou illisible :\n{e}",
+                QMessageBox.StandardButton.Ok
+            )
             
     def peut_quitter_grille(self) -> bool:
         """
