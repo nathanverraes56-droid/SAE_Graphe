@@ -18,21 +18,10 @@ class Grille:
         """Ajoute un motif à la grille."""
         self.motifs.append(motif)
 
-    def liste_valeurs_initiales(self) -> list[int]:
-        """
-        Retourne la liste de tous les chiffres fixes/indices de départ 
-        présents sur la grille.
-        """
-        valeurs_initiales = []
-        for case in self.dictionnaire_cases.values():
-            if case.est_fixe and case.valeur is not None:
-                valeurs_initiales.append(case.valeur)
-        return valeurs_initiales
-
     def verifier_voisins(self, ligne: int, colonne: int) -> bool:
         """
-        Vérifie si le chiffre de la case est bien entouré 
-        de chiffres différents.
+        Vérifie si le chiffre de la case (ligne, colonne) est bien entouré 
+        de chiffres différents (y compris en diagonale).
         """
         case_cible = self.dictionnaire_cases.get((ligne, colonne))
         if case_cible is None or case_cible.valeur is None:
@@ -50,15 +39,16 @@ class Grille:
         for dl, dc in directions:
             voisin = self.dictionnaire_cases.get((ligne + dl, colonne + dc))
             if voisin and voisin.valeur == valeur_cible:
-                return False 
+                return False # Doublon détecté chez un voisin !
 
         return True
 
     def charger_grille_json(self, chemin_fichier: str) -> None:
         """
         Lit le fichier JSON pour créer les objets Case et Motif de la grille.
+        Accepte le format classique (3 valeurs) et le format de sauvegarde (4 valeurs).
         """
-        # On réinitialise les données pour éviter de cumuler les grilles
+        # On vide la grille actuelle avant d'en charger une nouvelle
         self.motifs = []
         self.dictionnaire_cases = {}
 
@@ -73,11 +63,17 @@ class Grille:
                 colonne = donnee_case[1]
                 valeur_brute = donnee_case[2]
 
-                # Préparation pour la classe Case
+                # Si la valeur est 0, c'est une case vide (None dans notre modèle)
                 valeur = None if valeur_brute == 0 else valeur_brute
-                est_fixe = valeur_brute > 0
+                
+                # 💡 L'astuce de compatibilité :
+                # Si la liste contient 4 éléments, c'est une sauvegarde, on lit l'état "est_fixe".
+                # Sinon, c'est un fichier d'origine, on déduit que c'est fixe si la valeur > 0.
+                if len(donnee_case) >= 4:
+                    est_fixe = donnee_case[3]
+                else:
+                    est_fixe = valeur_brute > 0
 
-                # Création de l'objet Case avec ses 4 paramètres requis
                 nouvelle_case = Case(
                     position_ligne=ligne, 
                     position_colonne=colonne, 
@@ -88,5 +84,6 @@ class Grille:
                 cases_du_motif.append(nouvelle_case)
                 self.dictionnaire_cases[(ligne, colonne)] = nouvelle_case
 
+            # On crée le motif avec ses cases et on l'ajoute à la grille
             nouveau_motif = Motif(cases_du_motif)
             self.ajout_motif(nouveau_motif)

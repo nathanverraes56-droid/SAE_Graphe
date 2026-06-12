@@ -6,7 +6,7 @@ from Page_princ import Page_princ
 from VueParam import VueParam
 from VueJeu import VueJeu   # Import de ta vue de jeu
 from Grille import Grille   # Import de ton modèle de données
-import traceback
+import json
 
 class Controleur(QMainWindow):
     def __init__(self):
@@ -47,7 +47,8 @@ class Controleur(QMainWindow):
         # Connexions des boutons de la page de Jeu
         self.vue_jeu.ouvrir.clicked.connect(self.action_ouvrir_grille)
         self.vue_jeu.verification.clicked.connect(self.action_verifier_grille)
-        self.vue_jeu.quitter.clicked.connect(self.afficher_menu) 
+        self.vue_jeu.quitter.clicked.connect(self.afficher_menu)
+        self.vue_jeu.enregistrer.clicked.connect(self.action_enregistrer_grille)
         
         # Écoute active des cases de texte de la grille de jeu
         self.connecter_signaux_grille()
@@ -119,23 +120,23 @@ class Controleur(QMainWindow):
         self.styles_bordures = {}
         
         # Création des motifs
-        carte_motifs = {}
+        self.carte_motifs = {}
         for motif in self.modele_jeu.motifs:
             for case in motif.liste_cases:
-                carte_motifs[(case.position_ligne, case.position_colonne)] = motif
+                self.carte_motifs[(case.position_ligne, case.position_colonne)] = motif
 
         # On calcule les 4 bordures pour chaque case
         for l in range(self.modele_jeu.taille):
             for c in range(self.modele_jeu.taille):
-                motif_actuel = carte_motifs.get((l, c))
+                motif_actuel = self.carte_motifs.get((l, c))
                 if not motif_actuel:
                     continue
 
                 # On regarde à quel motif appartiennent les 4 voisins directs
-                voisin_haut = carte_motifs.get((l - 1, c))
-                voisin_bas = carte_motifs.get((l + 1, c))
-                voisin_gauche = carte_motifs.get((l, c - 1))
-                voisin_droite = carte_motifs.get((l, c + 1))
+                voisin_haut = self.carte_motifs.get((l - 1, c))
+                voisin_bas = self.carte_motifs.get((l + 1, c))
+                voisin_gauche = self.carte_motifs.get((l, c - 1))
+                voisin_droite = self.carte_motifs.get((l, c + 1))
 
                 # Si le voisin est d'un motif différent (ou qu'on touche le bord), on met 3px noir.
                 # Sinon, on met 1px gris clair pour délimiter les cases du même motif.
@@ -175,28 +176,100 @@ class Controleur(QMainWindow):
 
 
     def gerer_saisie_joueur(self, ligne: int, colonne: int, texte: str) -> None:
-        """Met à jour le modèle et colore la case en rouge s'il y a un doublon adjacent."""
+        """Enregistre le texte tapé et déclenche le contrôle de toute la grille."""
         case_modele = self.modele_jeu.dictionnaire_cases.get((ligne, colonne))
         qline_edit = self.vue_jeu.cases.get((ligne, colonne))
         
         if not case_modele or not qline_edit:
             return
 
+        # 1. On sauvegarde la valeur tapée dans le modèle
         valeur = int(texte) if (texte.isdigit() and texte != "0") else None
         if texte == "0": 
             qline_edit.setText("")
 
         case_modele.set_valeur(valeur)
 
-        # On a besoin de redonner ses bordures à la case quand on change sa couleur de fond
-        bordures_css = self.styles_bordures.get((ligne, colonne), "border: 1px solid black;")
+        # 2. On lance l'analyse visuelle globale pour mettre à jour les couleurs
+        self.mettre_a_jour_erreurs_visuelles()
 
-        if valeur is not None and not self.modele_jeu.verifier_voisins(ligne, colonne):
-            qline_edit.setStyleSheet(f"{bordures_css} font-size: 20px; background-color: #ffcccc; color: red;")
-            self.vue_jeu.etatresolution.setText("État de Résolution : Erreur d'adjacence !")
+    def mettre_a_jour_erreurs_visuelles(self) -> None:
+        """Parcourt toute la grille et affiche en rouge les cases qui violent une règle."""
+        erreur_trouvee = False
+        message = "État de Résolution : En cours"
+
+        for coords, case_modele in self.modele_jeu.dictionnaire_cases.items():
+            if case_modele.est_fixe:
+                continue # On ne change jamais la couleur des indices fixes (ils restent gris)
+            
+            qline_edit = self.vue_jeu.cases.get(coords)
+            bordures_css = self.styles_bordures.get(coords, "border: 1px solid black;")
+
+            if case_modele.valeur is not None:
+                # Vérification 1 : Règle des voisins (les 8 cases autour)
+                voisins_ok = self.modele_jeu.verifier_voisins(coords[0], coords[1])
+                
+                # Vérification 2 : Règle du motif (Doublons ou chiffre > N)
+                motif_actuel = self.carte_motifs.get(coords)
+                motif_ok = motif_actuel.estValide() if motif_actuel else True
+
+                # S'il y a la moindre erreur, la case passe en rouge
+                if not voisins_ok or not motif_ok:
+                    qline_edit.setStyleSheet(f"{bordures_css} font-size: 20px; background-color: #ffcccc; color: red;")
+                    erreur_trouvee = True
+                    
+                    # 💡 C'EST ICI QUE ÇA CHANGE : On affine le message d'erreur
+                    if not voisins_ok:
+                        message = "Erreur : Doublon avec un voisin adjacent !"
+                    elif case_modele.valeur > motif_actuel.getTaille():
+                        message = f"Erreur : Chiffre supérieur à {motif_actuel.getTaille()} !"
+                    else:
+                        message = "Erreur : Doublon détecté dans le motif !"
+                else:
+                    # Tout est bon, la case redevient blanche avec le texte bleu
+                    qline_edit.setStyleSheet(f"{bordures_css} font-size: 20px; background-color: white; color: blue;")
+            else:
+                # Si la case est vide (effacée), on s'assure qu'elle est bien blanche
+                qline_edit.setStyleSheet(f"{bordures_css} font-size: 20px; background-color: white; color: blue;")
+                
+        # Mise à jour globale du texte en bas de la grille
+        if erreur_trouvee:
+            self.vue_jeu.etatresolution.setText(message)
         else:
-            qline_edit.setStyleSheet(f"{bordures_css} font-size: 20px; background-color: white; color: blue;")
             self.vue_jeu.etatresolution.setText("État de Résolution : En cours")
+            
+    def action_enregistrer_grille(self) -> None:
+        """Bouton Enregistrer : Sauvegarde la partie en cours au format JSON."""
+        chemin_fichier, _ = QFileDialog.getSaveFileName(self, "Enregistrer la grille", "", "Fichiers JSON (*.json)")
+        
+        # Si le joueur annule la fenêtre d'enregistrement
+        if not chemin_fichier:
+            return
+
+        donnees_a_sauvegarder = {}
+        
+        # On boucle sur chaque motif pour reconstruire le dictionnaire
+        for i, motif in enumerate(self.modele_jeu.motifs):
+            nom_motif = f"motif{i+1}"
+            cases_motif = []
+            
+            for case in motif.liste_cases:
+                # On remplace None par 0 pour le fichier JSON
+                valeur = case.valeur if case.valeur is not None else 0
+                
+                # Format étendu : on ajoute case.est_fixe à la fin
+                cases_motif.append([case.position_ligne, case.position_colonne, valeur, case.est_fixe])
+            
+            donnees_a_sauvegarder[nom_motif] = cases_motif
+            
+        try:
+            with open(chemin_fichier, 'w', encoding='utf-8') as fichier:
+                # indent=4 permet de créer un fichier JSON propre et lisible
+                json.dump(donnees_a_sauvegarder, fichier, indent=4)
+                
+            self.vue_jeu.etatresolution.setText("Sauvegarde réussie ! 💾")
+        except Exception as e:
+            self.vue_jeu.etatresolution.setText(f"Erreur de sauvegarde : {e}")
 
     def action_ouvrir_grille(self) -> None:
         """Bouton Ouvrir : Charge un fichier JSON."""
