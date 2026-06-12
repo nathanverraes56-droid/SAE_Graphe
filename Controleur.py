@@ -49,6 +49,7 @@ class Controleur(QMainWindow):
         self.vue_jeu.ouvrir.clicked.connect(self.action_ouvrir_grille)
         self.vue_jeu.quitter.clicked.connect(self.afficher_menu)
         self.vue_jeu.enregistrer.clicked.connect(self.action_enregistrer_grille)
+        self.vue_jeu.solveur.clicked.connect(self.action_solveur)
         
         self.connecter_signaux_grille()
         
@@ -248,7 +249,7 @@ class Controleur(QMainWindow):
             self.vue_jeu.etatresolution.setText(message)
         elif grille_complete:
             # s'il n'y a pas d'erreur (erreur_trouvee est False) ET que la grille est pleine
-            self.vue_jeu.etatresolution.setText("Félicitations ! Grille résolue ! 🎉🎈🎉🎈🎉🎈🎉🎈🎈🎉🎉🎉🎉🎉🎈🎈🎈🎈🎉🎈🎉🎈🐅🐅")
+            self.vue_jeu.etatresolution.setText("Félicitations ! Grille résolue ! 🎉🎈🎉🎈🎉🎈🎉🎈🎈🎉🎉🎈🎈🎉🎈🎉🎈🐅🐅")
             self.partie_modifiee = False # on considère la partie terminée, on peut quitter sans pop-up
         else:
             self.vue_jeu.etatresolution.setText("État de Résolution : En cours")
@@ -393,6 +394,34 @@ class Controleur(QMainWindow):
                 print(f" Erreur lors du chargement de la grille par défaut : {e}")
         else:
             print(f" Info : Aucun fichier {chemin_defaut} n'a été trouvé au démarrage.")
+            
+    def action_solveur(self) -> None:
+        """Bouton Solveur : Résout automatiquement la grille à partir des indices de départ."""
+        if not self.modele_jeu.dictionnaire_cases:
+            self.vue_jeu.etatresolution.setText("Erreur : Aucune grille chargée !")
+            return
+
+        self.vue_jeu.etatresolution.setText("Résolution en cours... ")
+        # Force PyQt à rafraîchir l'affichage du texte
+        QApplication.processEvents()
+
+        # commence a partir de la grille de base
+        for case in self.modele_jeu.dictionnaire_cases.values():
+            if not case.est_fixe:
+                case.valeur = None
+
+        # Lancement du solveur du modèle
+        solution_trouvee = self.modele_jeu.resoudre_backtracking()
+
+        if solution_trouvee:
+            self.remplir_grille_graphique()
+            # affichage du message de félicitation
+            self.mettre_a_jour_erreurs_visuelles()
+            # rend la sauvegarde possible pour le joueur
+            self.partie_modifiee = True 
+        else:
+            self.remplir_grille_graphique()
+            self.vue_jeu.etatresolution.setText("Erreur : Cette grille n'a pas de solution !")
 
 
 if __name__ == "__main__":
