@@ -1,49 +1,67 @@
 import json
-from Motif import *
+from Case import Case
+from Motif import Motif
+
 class Grille:
-
     """
-    Création de la classe Grille composé de sa taille un d'un 
-    dictionnaire pour lequel sa clé est le nom du motif et sa valeur 
-    est de la classe motif
+    Représente la grille globale du jeu Néonaure.
+    Elle est composée d'une taille, d'une liste de Motifs et d'un dictionnaire
+    permettant d'accéder instantanément à une case par ses coordonnées (ligne, colonne).
     """
 
-    def __init__(self, taille: int):
-        self.taille = taille
-        self.liste = []
-    
+    def __init__(self, taille: int = 8):
+        self.taille: int = taille
+        self.motifs: list[Motif] = []
+        self.dictionnaire_cases: dict[tuple[int, int], Case] = {}
 
-    def ajoutMotif(self, motif: Motif) -> None: 
-        """
-        Ajoute un motif à la grille précisé en parametre
-        """
-        self.liste.append(motif)
+    def ajout_motif(self, motif: Motif) -> None: 
+        """Ajoute un motif à la grille."""
+        self.motifs.append(motif)
 
+    def liste_valeurs_initiales(self) -> list[int]:
+        """
+        Retourne la liste de tous les chiffres fixes/indices de départ 
+        présents sur la grille.
+        """
+        valeurs_initiales = []
+        for case in self.dictionnaire_cases.values():
+            if case.est_fixe and case.valeur is not None:
+                valeurs_initiales.append(case.valeur)
+        return valeurs_initiales
 
-    def listeCaseNonVide(self) -> list[Motif]:
+    def verifier_voisins(self, ligne: int, colonne: int) -> bool:
         """
-        Fait une liste à partir des cases non vide
+        Vérifie si le chiffre de la case est bien entouré 
+        de chiffres différents.
         """
-        liste_composant_grille = []
-        for i in range(self.taille):
-            if self.liste[i][2] > 0:
-                liste_composant_grille.append(self.liste[i][2])
-        return liste_composant_grille
+        case_cible = self.dictionnaire_cases.get((ligne, colonne))
+        if case_cible is None or case_cible.valeur is None:
+            return True # Pas de chiffre, pas de conflit
+        
+        valeur_cible = case_cible.valeur
 
+        # Les 8 positions autour de la case
+        directions = [
+            (-1, -1), (-1, 0), (-1, 1),
+            (0, -1),           (0, 1),
+            (1, -1),  (1, 0),  (1, 1)
+        ]
 
-    def setValeurCase(self, nouv_valeur: int) -> None:
-        """
-        Modifie la valeur de la case si elle ne fait pas partie des valeurs d'origine
-        """
-        if self.valeur in self.liste_case_non_vide():
-            print("vous ne pouvez pas modifier la valeur initiale") # vérification de l'existence d'une valeur sur une case
-        else:
-            self.valeur = nouv_valeur 
+        for dl, dc in directions:
+            voisin = self.dictionnaire_cases.get((ligne + dl, colonne + dc))
+            if voisin and voisin.valeur == valeur_cible:
+                return False 
+
+        return True
 
     def charger_grille_json(self, chemin_fichier: str) -> None:
         """
-        Lit le fichier JSON pour créer une grille.
+        Lit le fichier JSON pour créer les objets Case et Motif de la grille.
         """
+        # On réinitialise les données pour éviter de cumuler les grilles
+        self.motifs = []
+        self.dictionnaire_cases = {}
+
         with open(chemin_fichier, 'r', encoding='utf-8') as fichier:
             donnees = json.load(fichier)
 
@@ -55,14 +73,20 @@ class Grille:
                 colonne = donnee_case[1]
                 valeur_brute = donnee_case[2]
 
+                # Préparation pour la classe Case
                 valeur = None if valeur_brute == 0 else valeur_brute
                 est_fixe = valeur_brute > 0
 
-                nouvelle_case = Case(ligne, colonne, valeur)
+                # Création de l'objet Case avec ses 4 paramètres requis
+                nouvelle_case = Case(
+                    position_ligne=ligne, 
+                    position_colonne=colonne, 
+                    valeur=valeur, 
+                    est_fixe=est_fixe
+                )
                 
                 cases_du_motif.append(nouvelle_case)
-                
                 self.dictionnaire_cases[(ligne, colonne)] = nouvelle_case
 
             nouveau_motif = Motif(cases_du_motif)
-            self.motifs.append(nouveau_motif)
+            self.ajout_motif(nouveau_motif)

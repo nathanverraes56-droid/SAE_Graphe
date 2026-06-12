@@ -1,41 +1,53 @@
 class Case:
-
     """
-    Création de la classe case composé de ses coordonéées ligne, colonne et de sa valeur
+    Création de la classe case composée de ses coordonnées (ligne, colonne), 
+    de sa valeur et de son statut (fixe ou jouable).
     """
 
-    def __init__(self, position_ligne: int, position_colonne:int, valeur:int) -> None: # affectation des attributs de la classe Case
+    def __init__(self, position_ligne: int, position_colonne: int, valeur: int | None = None, est_fixe: bool = False) -> None: 
         self.position_ligne = position_ligne
         self.position_colonne = position_colonne
         self.valeur = valeur
+        # L'attribut indispensable pour que le Contrôleur sache s'il doit griser la case
+        self.est_fixe = est_fixe 
 
-    def getPositionCase(self) -> tuple: # renvoie un tuple composé de la position 
+    def getPositionCase(self) -> tuple[int, int]: 
+        """Renvoie un tuple composé de la position (colonne, ligne)"""
         return (self.position_colonne, self.position_ligne) 
 
-    def setPositionLigne(self, nouvelle_position_ligne: int) -> None: # modification de la position de la ligne de la case
+    def setPositionLigne(self, nouvelle_position_ligne: int) -> None: 
         self.position_ligne = nouvelle_position_ligne
 
-    def setPositionColonne(self, nouvelle_position_colonne:int) -> None: # modification de la position de la colonne de la case
+    def setPositionColonne(self, nouvelle_position_colonne: int) -> None:
         self.position_colonne = nouvelle_position_colonne
     
+    def set_valeur(self, nouvelle_valeur: int | None) -> None:
+        if not self.est_fixe:
+            self.valeur = nouvelle_valeur
+
     def estVide(self) -> bool:
-        return self.valeur == 0
+        return self.valeur is None or self.valeur == 0
     
-    def estVoisin(self) -> list:
+    def estVoisin(self) -> list[tuple[int, int]]:
         """
-        Met dans une liste les coordonées des voisins de la case :
-        (ligne-1, colonne-1), (ligne-1, colonne), (ligne-1, colonne+1)
-        (ligne, colonne-1), (ligne, colonne+1)
-        (ligne+1, colonne-1), (ligne+1, colonne), (ligne+1, colonne+1)
+        Génère et renvoie les coordonnées valides des 8 voisins autour de la case.
         """
-        liste_voisin: list[tuple] =[]
-        liste_voisin = [(self.position[0]-1, self.position[1]-1), (self.position[0]-1, self.position[1]), (self.position[0]-1, self.position[1]+1),
-         (self.position[0], self.position[1]-1), (self.position[0], self.position[1]+1), 
-         (self.position[0]+1, self.position[1]-1), (self.position[0]+1, self.position[1]), (self.position[0]+1, self.position[1]+1)]
-        for i in range(len(liste_voisin)):
-            if liste_voisin[i][0] < 0:
-                liste_voisin[i][0].pop() # retire si la position de la ligne est négative
-            elif liste_voisin[i][1] < 0:
-                liste_voisin[i][1].pop() # retire si la position de la colonne est négative
-        return liste_voisin 
-     
+        voisins_valides = []
+        l = self.position_ligne
+        c = self.position_colonne
+        
+        directions = [
+            (-1, -1), (-1, 0), (-1, 1),
+            (0, -1),           (0, 1),
+            (1, -1),  (1, 0),  (1, 1)
+        ]
+        
+        for decalage_l, decalage_c in directions:
+            nouvelle_ligne = l + decalage_l
+            nouvelle_colonne = c + decalage_c
+            
+            # On vérifie que la coordonnée ne sort pas de la grille par le haut ou la gauche
+            if nouvelle_ligne >= 0 and nouvelle_colonne >= 0:
+                voisins_valides.append((nouvelle_ligne, nouvelle_colonne))
+                
+        return voisins_valides

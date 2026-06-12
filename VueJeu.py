@@ -17,12 +17,12 @@ class VueJeu(QWidget):
 
         # Grille de jeu
         self.layout_grille = QGridLayout()
-        self.layout_grille.setSpacing(2) # Un léger espace pour voir les séparations de base
+        self.layout_grille.setSpacing(0) 
         self.layout_grille.setAlignment(Qt.AlignmentFlag.AlignCenter) # Centre la grille dans l'écran
         self.cases = {} 
 
-        # Validateur pour n'accepter que des chiffres (par exemple de 1 à 9)
-        validateur_chiffre = QIntValidator(1, 9)
+        # Validateur pour n'accepter que des chiffres 
+        validateur_chiffre = QIntValidator(1, 5)
 
         for ligne in range(8):
             for colonne in range(8):
@@ -42,7 +42,7 @@ class VueJeu(QWidget):
                 self.layout_grille.addWidget(case, ligne, colonne)
                 self.cases[(ligne, colonne)] = case
 
-        # Zone d'information (état de la partie)
+        # Etat de la partie 
         self.etatresolution = QLabel("Etat de Résolution : En cours")
         self.etatresolution.setFont(QFont("Arial", 16, QFont.Weight.Bold))
         self.etatresolution.setAlignment(Qt.AlignmentFlag.AlignCenter)

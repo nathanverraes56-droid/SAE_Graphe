@@ -1,12 +1,11 @@
-from Case import *
+from Case import Case
 
 class Motif:
-    """Un motif est une liste de cases ayant une taille (un nombre de cases)
-    """
+    """Un motif est une liste de cases ayant une taille (un nombre de cases)"""
     
-    def __init__(self, liste_cases : list[Case]) -> None:
-        self.taille : int = len(liste_cases)
-        self.liste_cases : list[Case] = liste_cases
+    def __init__(self, liste_cases: list[Case]) -> None:
+        self.taille: int = len(liste_cases)
+        self.liste_cases: list[Case] = liste_cases
         
     def getTaille(self) -> int:
         return self.taille
@@ -14,22 +13,25 @@ class Motif:
     def getListeCases(self) -> list[Case]:
         return self.liste_cases
     
-    def valeurExiste(self, valeur: int) -> bool:
-        """
-        Vérifie si la valeur mise en paramètre existe déjà dans le motif
-        """
-        for i in range(self.getTaille()):
-            if valeur in self.liste_cases[i][2]:
-                return True
-        return False
-    
     def estValide(self) -> bool:
         """
-        Vérifie si les valeurs des cases qui sont de 1 à N et si il existe deja une valeur identique dans le même motif
+        Vérifie qu'il n'y a aucun doublon dans le motif et que 
+        les valeurs saisies sont bien comprises entre 1 et N .
         """
-        for i in range(self.getTaille()):
-            if self.valeurExiste(self.liste_cases[i][2]):
-                return False
-        return True
-    
+        valeurs_trouvees = []
         
+        for case in self.liste_cases:
+            if not case.estVide():
+                valeur = case.valeur
+                
+                # Verifie qu'il n'y a pas de doublon
+                if valeur in valeurs_trouvees:
+                    return False
+                
+                # Verifie que la valeur n'est pas superieure a la taille du motif
+                if valeur > self.taille or valeur < 1:
+                    return False
+                    
+                valeurs_trouvees.append(valeur)
+                
+        return True
