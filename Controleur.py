@@ -305,7 +305,7 @@ class Controleur(QMainWindow):
 
         # Test des motifs
         for motif in self.modele_jeu.motifs:
-            if not motif.verifier_contraintes():
+            if not motif.estValide():
                 self.vue_jeu.etatresolution.setText("Vérification: Erreur dans la répartition d'un motif !")
                 return
 
