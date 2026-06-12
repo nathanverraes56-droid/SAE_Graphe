@@ -55,6 +55,9 @@ class Controleur(QMainWindow):
         # Application du thème par défaut au démarrage
         self.setProperty("etat_fenetre", "menu")
         self.Theme1()
+        
+        # chargement de la grille
+        self.charger_grille_defaut()
 
    # Fonction pour appliquer le QSS (Voir TP3)
     def appliquer_qss(self, nom_fichier: str) -> None:
@@ -333,7 +336,7 @@ class Controleur(QMainWindow):
                 f"Le fichier JSON est corrompu ou illisible :\n{e}",
                 QMessageBox.StandardButton.Ok
             )
-            
+
     def peut_quitter_grille(self) -> bool:
         """
         Vérifie si la grille a été modifiée si oui affiche une boîte de dialogue de confirmation.
@@ -376,6 +379,20 @@ class Controleur(QMainWindow):
                 event.ignore() # on annule la fermeture, l'application reste ouverte
         else:
             event.accept() # si on est dans les menus, on ferme directement
+            
+    def charger_grille_defaut(self) -> None:
+        """Charge une grille de base automatiquement au démarrage de l'application."""
+        chemin_defaut = os.path.join(sys.path[0], "fichier_json/grille1.json") 
+        
+        if os.path.exists(chemin_defaut):
+            try:
+                self.modele_jeu.charger_grille_json(chemin_defaut)
+                self.remplir_grille_graphique()
+                self.partie_modifiee = False
+            except Exception as e:
+                print(f" Erreur lors du chargement de la grille par défaut : {e}")
+        else:
+            print(f" Info : Aucun fichier {chemin_defaut} n'a été trouvé au démarrage.")
 
 
 if __name__ == "__main__":
