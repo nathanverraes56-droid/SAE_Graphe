@@ -53,6 +53,7 @@ class Controleur(QMainWindow):
         self.connecter_signaux_grille()
         
         # Application du thème par défaut au démarrage
+        self.setProperty("etat_fenetre", "menu")
         self.Theme1()
 
    # Fonction pour appliquer le QSS (Voir TP3)
@@ -63,16 +64,31 @@ class Controleur(QMainWindow):
                 qss = fichier_style.read()
                 QApplication.instance().setStyleSheet(qss)
 
-    def afficher_para(self):
-        self.pile_vues.setCurrentIndex(1)
+    def afficher_jeu(self):
+        self.resize(600, 600) 
+        self.pile_vues.setCurrentIndex(2)
+        
+        # On passe en mode "jeu" et on force la mise à jour visuelle
+        self.setProperty("etat_fenetre", "jeu")
+        self.style().unpolish(self)
+        self.style().polish(self)
 
     def afficher_menu(self):
         self.resize(550, 550) 
         self.pile_vues.setCurrentIndex(0)
         
-    def afficher_jeu(self):
-        self.resize(700, 700) 
-        self.pile_vues.setCurrentIndex(2)
+        # On repasse en mode "menu" et on force la mise à jour visuelle
+        self.setProperty("etat_fenetre", "menu")
+        self.style().unpolish(self)
+        self.style().polish(self)
+        
+    def afficher_para(self):
+        self.pile_vues.setCurrentIndex(1)
+        
+        # On repasse en mode "menu" et on force la mise à jour visuelle
+        self.setProperty("etat_fenetre", "menu")
+        self.style().unpolish(self)
+        self.style().polish(self)
         
     def Theme1(self) -> None:
         self.appliquer_qss("Diffnes.qss")

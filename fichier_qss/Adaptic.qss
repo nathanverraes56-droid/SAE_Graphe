@@ -32,15 +32,20 @@ QWidget
 	border-color: #051a39;
 
 }
-/* 2. On configure la fenêtre principale avec l'image de fond */
-QMainWindow {
+
+/* Quand on est dans le menu ou les paramètres */
+QMainWindow[etat_fenetre="menu"] {
     background-image: url("Images/Icone.png");
     background-position: center;
     background-repeat: no-repeat;
 }
 
-/* 3. IMPORTANT : On force la pile de vues et les pages internes à être 
-   transparentes pour laisser apparaître l'image de fond derrière elles */
+/* Quand on bascule sur la grille de jeu */
+QMainWindow[etat_fenetre="jeu"] {
+    background-image: none;
+}
+
+
 QStackedWidget, QStackedWidget > QWidget {
     background-color: transparent;
 }
