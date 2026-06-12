@@ -8,11 +8,11 @@ class Case:
         self.position_ligne = position_ligne
         self.position_colonne = position_colonne
         self.valeur = valeur
-        # L'attribut indispensable pour que le Contrôleur sache s'il doit griser la case
+        #Permet de Savoir si un nombre etait deja la a la base
         self.est_fixe = est_fixe 
 
     def getPositionCase(self) -> tuple[int, int]: 
-        """Renvoie un tuple composé de la position (colonne, ligne)"""
+        """Renvoie un tuple composé de la position"""
         return (self.position_colonne, self.position_ligne) 
 
     def setPositionLigne(self, nouvelle_position_ligne: int) -> None: 
@@ -29,9 +29,7 @@ class Case:
         return self.valeur is None or self.valeur == 0
     
     def estVoisin(self) -> list[tuple[int, int]]:
-        """
-        Génère et renvoie les coordonnées valides des 8 voisins autour de la case.
-        """
+        """Génère et renvoie les coordonnées valides des 8 voisins autour de la case."""
         voisins_valides = []
         l = self.position_ligne
         c = self.position_colonne
