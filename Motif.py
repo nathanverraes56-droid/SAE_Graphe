@@ -1,7 +1,9 @@
 from Case import Case
 
 class Motif:
-    """Un motif est une liste de cases ayant une taille (un nombre de cases)"""
+    """
+    Un motif est une liste de cases ayant une taille (un nombre de cases)
+    """
     
     def __init__(self, liste_cases: list[Case]) -> None:
         self.taille: int = len(liste_cases)

@@ -14,7 +14,9 @@ class Grille:
         self.dictionnaire_cases: dict[tuple[int, int], Case] = {}
 
     def ajout_motif(self, motif: Motif) -> None: 
-        """Ajout d'un motif à la grille."""
+        """
+        Ajout d'un motif à la grille
+        """
         self.motifs.append(motif)
 
     def verifier_voisins(self, ligne: int, colonne: int) -> bool:
@@ -122,9 +124,8 @@ class Grille:
 
             # On vérifie si ce chiffre respecte les voisins et les contraintes du motif
             if self.verifier_voisins(l, c) and motif_associe.estValide():
-                # Si c'est bon, on demande de résoudre la case vide suivante
                 if self.resoudre_backtracking():
-                    return True  # La solution s'est propagée jusqu'au bout !
+                    return True  # La solution s'est propagée jusqu'au bout
 
             # Si pas de solution possible pour l'instant on passe au chiffre suivant
             case_vide.valeur = None
