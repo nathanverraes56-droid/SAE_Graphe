@@ -12,15 +12,6 @@ class Page_princ(QWidget):
         self.setWindowIcon(QIcon(sys.path[0] + '/Images/Icone.png'))
         self.resize(500, 500)
         
-        #  Configuration de l'image de fond
-        pixmap_fond = QPixmap("Images/Icone.png")
-        palette = QPalette()
-        palette.setBrush(QPalette.ColorRole.Window, 
-                         QBrush(pixmap_fond.scaled(self.size(), 
-                                Qt.AspectRatioMode.IgnoreAspectRatio, 
-                                Qt.TransformationMode.SmoothTransformation)))
-        self.setPalette(palette)
-
         #  Création du layout principal
         self.Principale = QVBoxLayout()
         self.Principale.setAlignment(Qt.AlignmentFlag.AlignCenter) 
@@ -34,11 +25,11 @@ class Page_princ(QWidget):
             }
         """)
         
-        # Création d'un sous-layout pour organiser les éléments DANS le conteneur
+        # Création d'un sous-layout pour organiser les éléments dans le conteneur
         self.layout_conteneur = QVBoxLayout(self.conteneur)
         self.layout_conteneur.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.layout_conteneur.setContentsMargins(40, 40, 40, 40) # Ajoute de l'espace à l'intérieur de la bulle
-        self.layout_conteneur.setSpacing(20) # Ajoute de l'espace entre le titre et les boutons
+        self.layout_conteneur.setContentsMargins(40, 40, 40, 40) # Ajout de l'espace à l'intérieur de la bulle
+        self.layout_conteneur.setSpacing(20) # Ajout de l'espace entre le titre et les boutons
 
         # Création et stylisation du label (Titre)
         self.NomDuJeu = QLabel("Jeu du Néonaure")
@@ -54,27 +45,6 @@ class Page_princ(QWidget):
         self.b_jouer = QPushButton("JOUER")
         self.b_para = QPushButton("PARAMETRES")
         self.b_quitter = QPushButton("QUITTER")
-
-        # Application d'un style CSS aux boutons
-        style_bouton = """
-            QPushButton {
-                font-size: 18px;
-                padding: 15px;
-                background-color: #3498DB;
-                color: white;
-                border-radius: 8px;
-                min-width: 200px;
-            }
-            QPushButton:hover {
-                background-color: #2980B9;
-            }
-        """
-        #self.b_jouer.setStyleSheet(style_bouton)
-        #self.b_para.setStyleSheet(style_bouton)
-        #self.b_quitter.setStyleSheet(style_bouton)
-
-        # Rendre le bouton QUITTER fonctionnel
-        self.b_quitter.clicked.connect(self.close)
 
         # Ajout des widgets au layout
         self.layout_conteneur.addWidget(self.NomDuJeu)
