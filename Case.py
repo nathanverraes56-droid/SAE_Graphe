@@ -12,7 +12,9 @@ class Case:
         self.est_fixe = est_fixe 
 
     def getPositionCase(self) -> tuple[int, int]: 
-        """Renvoie un tuple composé de la position"""
+        """
+        Renvoie un tuple composé de la position
+        """
         return (self.position_colonne, self.position_ligne) 
 
     def setPositionLigne(self, nouvelle_position_ligne: int) -> None: 
@@ -29,7 +31,9 @@ class Case:
         return self.valeur is None or self.valeur == 0
     
     def estVoisin(self) -> list[tuple[int, int]]:
-        """Génère et renvoie les coordonnées valides des 8 voisins autour de la case."""
+        """
+        Génère et renvoie les coordonnées valides des 8 voisins autour de la case.
+        """
         voisins_valides = []
         l = self.position_ligne
         c = self.position_colonne
@@ -38,7 +42,7 @@ class Case:
             (-1, -1), (-1, 0), (-1, 1),
             (0, -1),           (0, 1),
             (1, -1),  (1, 0),  (1, 1)
-        ]
+        ] # Ce sont les coordonnées des voisins d'une case
         
         for decalage_l, decalage_c in directions:
             nouvelle_ligne = l + decalage_l
