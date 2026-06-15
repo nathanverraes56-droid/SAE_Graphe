@@ -58,7 +58,7 @@ class Controleur(QMainWindow):
         self.setProperty("etat_fenetre", "menu")
         self.Theme1()
         
-        # chargement de la grille
+        # Chargement de la grille
         self.charger_grille_defaut()
 
    # Fonction pour appliquer le QSS (Voir TP3)
@@ -73,7 +73,7 @@ class Controleur(QMainWindow):
         self.resize(600, 600) 
         self.pile_vues.setCurrentIndex(2)
         
-        # On passe en mode "jeu" et on met à jour le visuel
+        # On passe en mode jeu et on met à jour le visuel
         self.setProperty("etat_fenetre", "jeu")
         self.style().unpolish(self)
         self.style().polish(self)
@@ -92,19 +92,19 @@ class Controleur(QMainWindow):
     def afficher_para(self):
         self.pile_vues.setCurrentIndex(1)
         
-        # On repasse en mode "menu" et on met à jour le visuel
+        # On repasse en mode menu et on met à jour le visuel
         self.setProperty("etat_fenetre", "menu")
         self.style().unpolish(self)
         self.style().polish(self)
         
     def Theme1(self) -> None:
-        self.appliquer_qss("Diffnes.qss")
+        self.appliquer_qss("Clair.qss")
         self.vue_param.b_Theme1.setEnabled(False)
         self.vue_param.b_Theme2.setEnabled(True)
         self.theme_actuel = 1 
 
     def Theme2(self) -> None:
-        self.appliquer_qss("Adaptic.qss")
+        self.appliquer_qss("Sombre.qss")
         self.vue_param.b_Theme1.setEnabled(True)
         self.vue_param.b_Theme2.setEnabled(False)
         self.theme_actuel = 2 
@@ -148,14 +148,28 @@ class Controleur(QMainWindow):
                 voisin_gauche = self.carte_motifs.get((l, c - 1))
                 voisin_droite = self.carte_motifs.get((l, c + 1))
 
-                # Si le voisin est d'un motif différent ou que l'on touche le bord, on met 3px noir.
-                # Sinon, on met 1px gris clair pour délimiter les cases du même motif.
-                b_top = "3px solid black" if voisin_haut != motif_actuel else "1px solid #ccc"
-                b_bottom = "3px solid black" if voisin_bas != motif_actuel else "1px solid #ccc"
-                b_left = "3px solid black" if voisin_gauche != motif_actuel else "1px solid #ccc"
-                b_right = "3px solid black" if voisin_droite != motif_actuel else "1px solid #ccc"
+                # Si le voisin est d'un motif différent on met un mur sinon pas de mur.
+                if voisin_haut != motif_actuel:
+                    b_top = "3px solid black" 
+                else:
+                    b_top = "1px solid #ccc"
+                    
+                if voisin_bas != motif_actuel:
+                    b_bottom = "3px solid black"
+                else: 
+                    b_bottom = "1px solid #ccc"
+                    
+                if voisin_gauche != motif_actuel:
+                    b_left = "3px solid black" 
+                else: 
+                    b_left = "1px solid #ccc"
+                    
+                if voisin_droite != motif_actuel:
+                    b_right = "3px solid black" 
+                else:
+                    b_right = "1px solid #ccc"
 
-                # On sauvegarde la règle CSS de cette case
+                # On sauvegarde le CSS de cette case
                 self.styles_bordures[(l, c)] = f"border-top: {b_top}; border-bottom: {b_bottom}; border-left: {b_left}; border-right: {b_right};"
 
 
@@ -209,26 +223,31 @@ class Controleur(QMainWindow):
         self.mettre_a_jour_erreurs_visuelles()
 
     def mettre_a_jour_erreurs_visuelles(self) -> None:
-        """Parcourt toute la grille et affiche en rouge les cases qui enfreignent une règle."""
+        """
+        Parcours toute la grille et affiche en rouge les cases qui enfreignent une règle.
+        """
         erreur_trouvee = False
         message = "État de Résolution : En cours"
 
         for coords, case_modele in self.modele_jeu.dictionnaire_cases.items():
             if case_modele.est_fixe:
-                continue # On ne change jamais la couleur des indices fixes (ils restent gris)
+                continue # On ne change jamais la couleur des indices fixes
             
             qline_edit = self.vue_jeu.cases.get(coords)
             bordures_css = self.styles_bordures.get(coords, "border: 1px solid black;")
 
             if case_modele.valeur is not None:
-                #vérification des voisins
+                # Vérification des voisins
                 voisins_ok = self.modele_jeu.verifier_voisins(coords[0], coords[1])
                 
-                #vérification du motif (Doublons ou chiffre > N)
+                # Vérification du motif (Doublons ou chiffre > N)
                 motif_actuel = self.carte_motifs.get(coords)
-                motif_ok = motif_actuel.estValide() if motif_actuel else True
+                if motif_actuel:
+                    motif_ok = motif_actuel.estValide() 
+                else:
+                    motif_ok = True
 
-                # en cas d'erreur la case passe en rouge
+                # En cas d'erreur la case passe en rouge
                 if not voisins_ok or not motif_ok:
                     qline_edit.setStyleSheet(f"{bordures_css} font-size: 20px; background-color: #ffcccc; color: red;")
                     erreur_trouvee = True
@@ -240,21 +259,21 @@ class Controleur(QMainWindow):
                     else:
                         message = "Erreur : Doublon détecté dans le motif !"
                 else:
-                    # case redevient blanche avec texte bleu
+                    # La case redevient blanche avec texte bleu
                     qline_edit.setStyleSheet(f"{bordures_css} font-size: 20px; background-color: white; color: blue;")
             else:
-                # si la case est vide on s'assure qu'elle soit blanche
+                # Si la case est vide on s'assure qu'elle soit blanche
                 qline_edit.setStyleSheet(f"{bordures_css} font-size: 20px; background-color: white; color: blue;")
                 
         # all(...) renvoie True uniquement si toutes les cases ont une valeur
         grille_complete = all(case.valeur is not None for case in self.modele_jeu.dictionnaire_cases.values())
 
-        #affichage du message final
+        # Affichage du message final
         if erreur_trouvee:
             self.vue_jeu.etatresolution.setText(message)
         elif grille_complete:
-            # s'il n'y a pas d'erreur (erreur_trouvee est False) ET que la grille est pleine
-            self.vue_jeu.etatresolution.setText("Félicitations ! Grille résolue ! 🎉🎈🎉🎈🎉🎈🎉🎈🎈🎉🎉🎈🎈🎉🎈🎉🎈🐅🐅")
+            # S'il n'y a pas d'erreur et que la grille est pleine
+            self.vue_jeu.etatresolution.setText("Félicitations ! Grille résolue ! 🎈🎉🎈🎉🎈🎉🎉🎈🎈🐅🐅")
             self.partie_modifiee = False # on considère la partie terminée, on peut quitter sans pop-up
         else:
             self.vue_jeu.etatresolution.setText("État de Résolution : En cours")
@@ -296,13 +315,15 @@ class Controleur(QMainWindow):
             self.vue_jeu.etatresolution.setText(f"Erreur de sauvegarde : {e}")
 
     def action_ouvrir_grille(self) -> None:
-        """Bouton Ouvrir : Charge un fichier JSON uniquement en format 8x8."""
+        """
+        Bouton Ouvrir : Charge un fichier JSON uniquement en format 8x8.
+        """
         chemin_fichier, _ = QFileDialog.getOpenFileName(self, "Ouvrir une grille Néonaure", "", "Fichiers JSON (*.json)")
         if not chemin_fichier:
             return # L'utilisateur a annulé la sélection
 
         try:
-            # prelecture du fichier pour validation stricte du format 8x8
+            # Prélecture du fichier pour validation stricte du format 8x8
             with open(chemin_fichier, 'r', encoding='utf-8') as fichier:
                 donnees = json.load(fichier)
 
@@ -315,11 +336,11 @@ class Controleur(QMainWindow):
                     ligne = donnee_case[1]
                     compteur_cases += 1
                     
-                    # si une coordonnée sort des index d'une grille 8x8 (0 à 7)
+                    # Si une coordonnée sort des index d'une grille 8x8 (0 à 7)
                     if ligne < 0 or ligne >= 8 or colonne < 0 or colonne >= 8:
                         format_incorrect = True
 
-            # si le compte n'y est pas ou si ça déborde
+            # Si le compte n'y est pas ou si ça déborde
             if compteur_cases != 64 or format_incorrect:
                 QMessageBox.warning(
                     self,
@@ -327,15 +348,15 @@ class Controleur(QMainWindow):
                     f"Impossible d'importer cette grille.\n Grille 8x8 requise",
                     QMessageBox.StandardButton.Ok
                 )
-                return # on annule
+                return
 
-            #si la validation est réussie, on procède au chargement normal
+            # Si la validation est réussie, on procède au chargement normal
             self.modele_jeu.charger_grille_json(chemin_fichier)
             self.remplir_grille_graphique()
             self.partie_modifiee = False
             
         except Exception as e:
-            # si le fichier JSON a un problème
+            # Si le fichier JSON a un problème
             QMessageBox.critical(
                 self,
                 "Erreur de lecture",
@@ -374,7 +395,9 @@ class Controleur(QMainWindow):
             event.ignore() # On annule la fermeture, l'application reste ouverte
             
     def charger_grille_defaut(self) -> None:
-        """Charge une grille de base automatiquement au démarrage de l'application."""
+        """
+        Charge une grille de base automatiquement au démarrage de l'application.
+        """
         chemin_defaut = os.path.join(sys.path[0], "fichier_json/grille1.json") 
         
         if os.path.exists(chemin_defaut):
@@ -388,7 +411,9 @@ class Controleur(QMainWindow):
             print(f" Info : Aucun fichier {chemin_defaut} n'a été trouvé au démarrage.")
             
     def action_solveur(self) -> None:
-        """Bouton Solveur : Résout automatiquement la grille à partir des indices de départ."""
+        """
+        Bouton Solveur: Résout automatiquement la grille à partir des indices de départ.
+        """
         if not self.modele_jeu.dictionnaire_cases:
             self.vue_jeu.etatresolution.setText("Erreur : Aucune grille chargée !")
             return
@@ -397,7 +422,7 @@ class Controleur(QMainWindow):
         # Force PyQt à rafraîchir l'affichage du texte
         QApplication.processEvents()
 
-        # commence a partir de la grille de base
+        # Commence à partir de la grille de base
         for case in self.modele_jeu.dictionnaire_cases.values():
             if not case.est_fixe:
                 case.valeur = None
@@ -407,16 +432,18 @@ class Controleur(QMainWindow):
 
         if solution_trouvee:
             self.remplir_grille_graphique()
-            # affichage du message de félicitation
+            # Affichage du message de félicitation
             self.mettre_a_jour_erreurs_visuelles()
-            # rend la sauvegarde possible pour le joueur
+            # Rend la sauvegarde possible pour le joueur
             self.partie_modifiee = True 
         else:
             self.remplir_grille_graphique()
             self.vue_jeu.etatresolution.setText("Erreur : Cette grille n'a pas de solution !")
             
     def basculer_theme(self) -> None:
-        """Bouton Thème : Alterne entre le thème clair et le thème sombre."""
+        """
+        Bouton Thème: Alterne entre le thème clair et le thème sombre.
+        """
         if getattr(self, 'theme_actuel', 1) == 1:
             self.Theme2() 
         else:
